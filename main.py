@@ -28,6 +28,9 @@ def Replace(old:str, new:str, Filein, Fileout):
 				file.close()
 
 def Split_text(text:str)->str:
+	"""
+	Split properly text with space and also split punctuation
+	"""
 	text_toreturn = []
 	chars = [',', '.', ';']
 	for str in text.split(' '):
