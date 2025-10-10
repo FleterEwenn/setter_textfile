@@ -15,9 +15,13 @@ elif not os.path.isfile(args.input) or not os.path.isfile(args.output):
 	raise Exception("les fichiers mis en paramètre n'existent pas")
 
 if args.pipeline:
+
 	cmds = [cmd for cmd in args.pipeline.split('/')]
+
 	for cmd in cmds:
+
 		if cmd.startswith('replace'):
+
 			current_cmd, old, new = cmd.split(':')
 			with open(args.input, 'r') as file:
 				text = file.read()
@@ -26,6 +30,7 @@ if args.pipeline:
 					if words[i] == old:
 						words[i]  = new
 				file.close()
+				
 			with open(args.output, 'w') as file:
 				for word in words:
 					file.write(word + ' ')
