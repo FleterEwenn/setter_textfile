@@ -9,8 +9,40 @@ parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:n
 
 args = parser.parse_args()
 
+def Replace(old:str, new:str, Filein, Fileout):
+			"""
+			Change the old string to the new from the Filein to the Fileout
+			"""
+	
+			with open(Filein, 'r') as file:
+				text = file.read()
+				words = Split_text(text)
+				for i in range(len(words)):
+					if words[i] == old:
+						words[i]  = new
+				file.close()
+
+			with open(Fileout, 'w') as file:
+				for word in words:
+					file.write(word + ' ')
+				file.close()
+
+def Split_text(text:str)->str:
+	text_toreturn = []
+	chars = [',', '.', ';']
+	for str in text.split(' '):
+		if str[-1] in chars:
+			text_toreturn.append(str[:-1])
+			text_toreturn.append(str[-1])
+
+		else:
+			text_toreturn.append(str)
+	return text_toreturn 
+				
+
 if not args.input or not args.output:
 	raise Exception("il manque un fichier d'entrée ou de sortie")
+
 elif not os.path.isfile(args.input) or not os.path.isfile(args.output):
 	raise Exception("les fichiers mis en paramètre n'existent pas")
 
@@ -23,14 +55,4 @@ if args.pipeline:
 		if cmd.startswith('replace'):
 
 			current_cmd, old, new = cmd.split(':')
-			with open(args.input, 'r') as file:
-				text = file.read()
-				words = text.split(' ')
-				for i in range(len(words)):
-					if words[i] == old:
-						words[i]  = new
-				file.close()
-				
-			with open(args.output, 'w') as file:
-				for word in words:
-					file.write(word + ' ')
+			Replace(old, new, args.input, args.output)
