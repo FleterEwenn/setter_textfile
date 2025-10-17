@@ -5,28 +5,21 @@ parser = argparse.ArgumentParser(prog="textpipe", description="Moteur de traitem
 
 parser.add_argument('-o', '--output', help='fichier de sortie')
 parser.add_argument('-i', '--input', help="fichier d'entrée")
-parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new / ...')
+parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new/lower:word/upper:word ...')
 
 args = parser.parse_args()
 
-def Replace(old:str, new:str, Filein, Fileout):
-			"""
-			Change the old string to the new from the Filein to the Fileout
-			"""
+def Replace(old:str, new:str, words:str)->str:
+	"""
+	Change the old string to the new in the variable words and return it
+	"""
 	
-			with open(Filein, 'r') as file:
-				text = file.read()
-				words = Split_text(text)
-				for i in range(len(words)):
-					if words[i] == old:
-						words[i]  = new
-				file.close()
-
-			with open(Fileout, 'w') as file:
-				for word in words:
-					file.write(word + ' ')
-				file.close()
-
+	for i in range(len(words)):
+		if words[i] == old:
+			words[i] = new
+	return words	
+	
+			
 def Split_text(text:str)->str:
 	"""
 	Split properly text with space and also split punctuation
@@ -41,7 +34,12 @@ def Split_text(text:str)->str:
 		else:
 			text_toreturn.append(str)
 	return text_toreturn 
-				
+
+with open(args.input, 'r') as file:
+	text = file.read()
+	file.close()
+
+current_words = Split_text(text)		
 
 if not args.input or not args.output:
 	raise Exception("il manque un fichier d'entrée ou de sortie")
@@ -58,4 +56,7 @@ if args.pipeline:
 		if cmd.startswith('replace'):
 
 			current_cmd, old, new = cmd.split(':')
-			Replace(old, new, args.input, args.output)
+			current_words = Replace(old, new, current_words)
+
+with open(args.output, 'w') as file:
+	file.write(' '.join(current_words))
