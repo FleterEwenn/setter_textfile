@@ -12,8 +12,11 @@ Ensuite elles sont sauvegardées dans un fichier de sortie de la même extension
 
 ## Téléchargement du repository
 
-Il suffit de le cloner :  
-`git clone https://github.com/FleterEwenn/setter_textfile.git`
+Il suffit de le cloner et d'installer les dépendancesc:  
+```
+git clone https://github.com/FleterEwenn/setter_textfile.git
+pip install -r requirements.txt
+```
 
 ## Execution du code
 
