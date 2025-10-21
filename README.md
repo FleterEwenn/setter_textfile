@@ -8,7 +8,7 @@ Ces tâches sont :
 * mettre en majuscule un mot
 * ou le mettre le minuscule
 
-Ensuite elles sont sauvegardées dans un fichier de sortie de la même extension que le fichier d'entrée.
+Ensuite elles sont sauvegardées dans un fichier de sortie (mis en paramètre au non) de la même extension que le fichier d'entrée.
 
 ## Téléchargement du repository
 
@@ -34,5 +34,9 @@ Voici un exemple d'éxécution du code où on considére être dans le dossier o
 ***Attention :*** **l'odre dans lequel les commandes sont écrites est très important.**
 
 * `replace:old:new` : remplace tous les mots "old" rencontrés dans le fichier par le "new"
-* `upper:word` : met en majuscule tout les mots "word" rencontrés dans le fichier
-* `lower:word` : met en minuscule tout les mots "word" rencontrés dans le fichier
+* `upper` :
+   * `upper:word` : met en majuscule tout les mots "word" rencontrés dans le fichier
+   * `upper:word:letter` : met en majuscule toutes les lettres "letter" dans les mots "word" rencontrés dans le fichier 
+* `lower` :
+  * `lower:word` : idem que "upper" mais en minuscule
+  * `lower:word:letter` : idem que "upper" mais en minuscule
