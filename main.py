@@ -66,10 +66,10 @@ def Lower(words:list, wordtolower:str, letter=None)->list:
 				words[i] = words[i].lower()
 	return words			
 
-if not args.input or not args.output:
+if not args.input:
 	raise Exception("il manque un fichier d'entrée ou de sortie")
 
-elif not os.path.isfile(args.input) or not os.path.isfile(args.output):
+elif not os.path.isfile(args.input):
 	raise Exception("les fichiers mis en paramètre n'existent pas")
 
 if str(args.input).lower().endswith('.docx'):
@@ -141,8 +141,16 @@ if args.pipeline:
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
 		document.paragraphs[i].text = ' '.join(current_words[i])
-	document.save(args.output)
+	if args.output:
+		document.save(args.output)
+	else:
+		document.save('output.docx')
 
 else:
-	with open(args.output, 'w') as file:
-		file.write(' '.join(current_words))
+	if args.output:
+		with open(args.output, 'w') as file:
+			file.write(' '.join(current_words))
+
+	else:
+		with open('output.txt', 'w') as file:
+			file.write(' '.join(current_words))
