@@ -81,7 +81,6 @@ if str(args.input).lower().endswith('.docx'):
 elif str(args.input).lower().endswith('.txt'):
 	with open(args.input, 'r') as file:
 		text = file.read()
-		file.close()
 
 	current_words = Split_text(text)
 else:
@@ -131,13 +130,13 @@ if args.pipeline:
 						current_words[i] = Lower(current_words[i], word_to_lower)
 				else:
 					current_words = Lower(current_words, word_to_lower)
-			elif len(cmd.spit(':')) == 3:
+			elif len(cmd.split(':')) == 3:
 				current_cmd, word_target, letter_to_upper = cmd.split(':')
 				if args.input.lower().endswith('.docx'):
 					for i in range(len(current_words)):
 						current_words[i] = Lower(current_words[i], word_target, letter=letter_to_upper)
 				else:
-					current_words = Lower(current_words, word_target, word_to_upper)
+					current_words = Lower(current_words, word_target, letter=letter_to_upper)
 
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
@@ -147,4 +146,3 @@ if args.input.lower().endswith('.docx'):
 else:
 	with open(args.output, 'w') as file:
 		file.write(' '.join(current_words))
-		file.close()
