@@ -36,23 +36,34 @@ def Split_text(text:str)->str:
 			text_toreturn.append(str_)
 	return text_toreturn
 
-def Upper(words:list, wordtoupper:str, all=False)->list:
+def Upper(words:list, wordtoupper:str, letter=None)->list:
 	"""
 	upper the word 'wordtoupper'
 	"""
 
-
 	for i in range(len(words)):
 		if words[i] == wordtoupper:
-			words[i] = words[i].upper()
+			if letter:
+				for j in range(len(words[i])):
+					if words[i][j] == letter:
+						words[i] = words[i][:j] + words[i][j].upper() + words[i][j+1:]
+			else:
+				words[i] = words[i].upper()
+
 	return words
-def Lower(words:list, wordtolower:str, all=False)->list:
+
+def Lower(words:list, wordtolower:str, letter=None)->list:
 	"""
 	lower the word 'wordtolower'
 	"""
 	for i in range(len(words)):
 		if words[i].lower() == wordtolower:
-			words[i] = words[i].lower()
+			if letter:
+				for j in range(len(words[i])):
+					if words[i][j] == letter:
+						words[i] = words[i][:j] + words[i][j].lower() + words[i][j+1:]
+			else:
+				words[i] = words[i].lower()
 	return words			
 
 if not args.input or not args.output:
@@ -66,6 +77,7 @@ if str(args.input).lower().endswith('.docx'):
 	current_words = []
 	for para in document.paragraphs:
 		current_words.append(Split_text(para.text))
+
 elif str(args.input).lower().endswith('.txt'):
 	with open(args.input, 'r') as file:
 		text = file.read()
@@ -93,21 +105,39 @@ if args.pipeline:
 				current_words = Replace(old, new, current_words)
 		
 		if cmd.startswith('upper'):
-			current_cmd, word_to_upper = cmd.split(':')
 
-			if args.input.lower().endswith('.docx'):
-				for i in range(len(current_words)):
-					current_words[i] = Upper(current_words[i], word_to_upper)
-			else:
-				current_words = Upper(current_words, word_to_upper)
+			if len(cmd.split(':')) == 2:
+				current_cmd, word_to_upper = cmd.split(':')
+				
+				if args.input.lower().endswith('.docx'):
+					for i in range(len(current_words)):
+						current_words[i] = Upper(current_words[i], word_to_upper)
+				else:
+					current_words = Upper(current_words, word_to_upper)
+			elif len(cmd.split(':')) == 3:
+				current_cmd, word_target, letter_to_upper = cmd.split(':')
+				
+				if args.input.lower().endswith('.docx'):
+					for i in range(len(current_words)):
+						current_words[i] = Upper(current_words[i], word_target, letter=letter_to_upper)
+				else:
+					current_words = Upper(current_words, word_target, letter=letter_to_upper)
 		
 		if cmd.startswith('lower'):
-			current_cmd, word_to_lower = cmd.split(':')
-			if args.input.lower().endswith('.docx'):
-				for i in range(len(current_words)):
-					current_words[i] = Lower(current_words[i], word_to_lower)
-			else:
-				current_words = Lower(current_words, word_to_lower)
+			if len(cmd.spit(':')) == 2:
+				current_cmd, word_to_lower = cmd.split(':')
+				if args.input.lower().endswith('.docx'):
+					for i in range(len(current_words)):
+						current_words[i] = Lower(current_words[i], word_to_lower)
+				else:
+					current_words = Lower(current_words, word_to_lower)
+			elif len(cmd.spit(':')) == 3:
+				current_cmd, word_target, letter_to_upper = cmd.split(':')
+				if args.input.lower().endswith('.docx'):
+					for i in range(len(current_words)):
+						current_words[i] = Lower(current_words[i], word_target, letter=letter_to_upper)
+				else:
+					current_words = Lower(current_words, word_target, word_to_upper)
 
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
