@@ -140,7 +140,13 @@ if args.pipeline:
 
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
-		document.paragraphs[i].text = ' '.join(current_words[i])
+		document.paragraphs[i].text = ' '
+		for word in current_words[i]:
+			if word in [',', ';', '.']:
+				document.paragraphs[i].text += word
+			else:
+				document.paragraphs[i].text += ' ' + word
+
 	if args.output:
 		document.save(args.output)
 	else:
@@ -149,8 +155,16 @@ if args.input.lower().endswith('.docx'):
 else:
 	if args.output:
 		with open(args.output, 'w') as file:
-			file.write(' '.join(current_words))
+			for word in current_words:
+				if word in [',', ';', '.']:
+					file.write(word)
+				else:
+					file.write(' ' + word)
 
 	else:
 		with open('output.txt', 'w') as file:
-			file.write(' '.join(current_words))
+			for word in current_words:
+				if word in [',', ';', '.']:
+					file.write(word)
+				else:
+					file.write(' ' + word)
