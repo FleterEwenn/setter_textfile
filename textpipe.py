@@ -2,6 +2,8 @@ import argparse
 import os
 import string
 from docx import Document
+from pipeline_commands import Upper, Lower, Replace
+from split_text import Split_text
 
 parser = argparse.ArgumentParser(prog="textpipe", description="Moteur de traitement de texte programmable ")
 
@@ -10,62 +12,6 @@ parser.add_argument('-i', '--input', help="fichier d'entrée")
 parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new/lower:word/upper:word/stats ...')
 
 args = parser.parse_args()
-
-def Replace(old:str, new:str, words:list)->list:
-	"""
-	Change the old string to the new in the variable words
-	"""
-	
-	for i in range(len(words)):
-		if words[i] == old:
-			words[i] = new
-	return words	
-	
-			
-def Split_text(text:str)->str:
-	"""
-	Split properly text with space and also split punctuation
-	"""
-	text_toreturn = []
-	chars = [',', '.', ';']
-	for str_ in text.split(' '):
-		if str_[-1] in chars:
-			text_toreturn.append(str_[:-1])
-			text_toreturn.append(str_[-1])
-
-		else:
-			text_toreturn.append(str_)
-	return text_toreturn
-
-def Upper(words:list, wordtoupper:str, letter=None)->list:
-	"""
-	upper the word 'wordtoupper'
-	"""
-
-	for i in range(len(words)):
-		if words[i] == wordtoupper:
-			if letter:
-				for j in range(len(words[i])):
-					if words[i][j] == letter:
-						words[i] = words[i][:j] + words[i][j].upper() + words[i][j+1:]
-			else:
-				words[i] = words[i].upper()
-
-	return words
-
-def Lower(words:list, wordtolower:str, letter=None)->list:
-	"""
-	lower the word 'wordtolower'
-	"""
-	for i in range(len(words)):
-		if words[i].lower() == wordtolower:
-			if letter:
-				for j in range(len(words[i])):
-					if words[i][j] == letter:
-						words[i] = words[i][:j] + words[i][j].lower() + words[i][j+1:]
-			else:
-				words[i] = words[i].lower()
-	return words			
 
 if not args.input:
 	raise Exception("il manque un fichier d'entrée ou de sortie")
