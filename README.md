@@ -7,6 +7,8 @@ Ces tâches sont :
 * remplacer en mot par un autre (dans le tout fichier)
 * mettre en majuscule un mot
 * ou le mettre le minuscule
+* afficher les statistiques
+* mettre en capitale un mot
 
 Ensuite elles sont sauvegardées dans un fichier de sortie (mis en paramètre au non) de la même extension que le fichier d'entrée.
 
@@ -40,3 +42,5 @@ Voici un exemple d'éxécution du code où on considére être dans le dossier o
 * `lower` :
   * `lower:word` : idem que "upper" mais en minuscule
   * `lower:word:letter` : idem que "upper" mais en minuscule
+* `stats` : donne les statistiques du fichier
+* `capitalize:word` : capitalise le mot "word"
