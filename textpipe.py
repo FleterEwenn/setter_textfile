@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(prog="textpipe", description="Moteur de traitem
 
 parser.add_argument('-o', '--output', help='fichier de sortie')
 parser.add_argument('-i', '--input', help="fichier d'entrée")
-parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new/lower:word/upper:word/stats ...')
+parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new/lower:word/upper:word/stats/capitalize:word ...')
 
 args = parser.parse_args()
 
@@ -104,6 +104,14 @@ if args.pipeline:
 						current_words[i] = Lower(current_words[i], word_target, letter=letter_to_upper)
 				else:
 					current_words = Lower(current_words, word_target, letter=letter_to_upper)
+		
+		if cmd.startswith('capitalize'):
+			current_cmd, word_to_capitalize = cmd.split(':')
+			if args.input.lower().endswith('.docx'):
+				for i in range(len(current_words)):
+					current_words[i] = Upper(current_words[i], word_to_capitalize, letter=word_to_capitalize[0])
+			else:
+				current_words = Upper(current_words, word_to_capitalize, letter=word_to_capitalize[0])
 
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
