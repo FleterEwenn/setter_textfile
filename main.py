@@ -1,12 +1,13 @@
 import argparse
 import os
+import string
 from docx import Document
 
 parser = argparse.ArgumentParser(prog="textpipe", description="Moteur de traitement de texte programmable ")
 
 parser.add_argument('-o', '--output', help='fichier de sortie')
 parser.add_argument('-i', '--input', help="fichier d'entrée")
-parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new/lower:word/upper:word ...')
+parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:new/lower:word/upper:word/stats ...')
 
 args = parser.parse_args()
 
@@ -91,6 +92,26 @@ if args.pipeline:
 	cmds = [cmd for cmd in args.pipeline.split('/')]
 
 	for cmd in cmds:
+
+		if cmd.startswith('stats'):
+			len_word = 0
+			len_punctuation = 0
+			if args.input.lower().endswith('.docx'):
+				for para in current_words:
+					for elt in para:
+						if elt.isalpha():
+							len_word += 1
+						elif elt in string.punctuation:
+							len_punctuation += 1
+			else:
+				for elt in current_words:
+					if elt.isalpha():
+						len_word += 1
+					elif elt in string.punctuation:
+						len_punctuation += 1
+			
+			print("words : " + str(len_word))
+			print("punctuation : " + str(len_punctuation))
 
 		if cmd.startswith('replace'):
 
