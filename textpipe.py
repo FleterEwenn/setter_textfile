@@ -137,6 +137,8 @@ if args.input.lower().endswith('.docx'):
 		document.save('output.docx')
 
 elif args.input.lower().endswith('.odt'):
+	
+	document_odt = load(args.input)
 
 	for child in list(document_odt.text.childNodes):
 		document_odt.text.removeChild(child)

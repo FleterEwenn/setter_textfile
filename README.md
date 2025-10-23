@@ -2,9 +2,9 @@
 
 ## But du projet
 
-Setter_textfile permet de realiser des tâches répetitives sur des fichiers de traitement de texte (pour l'instant .txt et .docx).  
+Setter_textfile permet de realiser des tâches répetitives sur des fichiers de traitement de texte (pour l'instant .txt, .docx et .odt).  
 Ces tâches sont :
-* remplacer en mot par un autre (dans le tout fichier)
+* remplacer en mot par un autre
 * mettre en majuscule un mot
 * ou le mettre le minuscule
 * afficher les statistiques
