@@ -2,6 +2,8 @@ import argparse
 import os
 import string
 from docx import Document
+from odf.opendocument import load
+from odf.text import P
 from pipeline_commands import Upper, Lower, Replace
 from split_text import Split_text
 
@@ -28,8 +30,14 @@ if str(args.input).lower().endswith('.docx'):
 elif str(args.input).lower().endswith('.txt'):
 	with open(args.input, 'r') as file:
 		text = file.read()
-
 	current_words = Split_text(text)
+
+elif str(args.input).lower().endswith('.odt'):
+	document_odt = load(args.input)
+	current_words = []
+	for para in document_odt.getElementsByType(P):
+		current_words.append(Split_text(para.firstChild.data))
+
 else:
 	raise Exception("l'extension du fichier d'entrée n'est pas traitable")
 
@@ -42,7 +50,7 @@ if args.pipeline:
 		if cmd.startswith('stats'):
 			len_word = 0
 			len_punctuation = 0
-			if args.input.lower().endswith('.docx'):
+			if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
 				for para in current_words:
 					for elt in para:
 						if elt.isalpha():
@@ -63,7 +71,7 @@ if args.pipeline:
 
 			current_cmd, old, new = cmd.split(':')
 
-			if args.input.lower().endswith('.docx'):
+			if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
 				for i in range(len(current_words)):
 					current_words[i] = Replace(old, new, current_words[i])
 					
@@ -75,7 +83,7 @@ if args.pipeline:
 			if len(cmd.split(':')) == 2:
 				current_cmd, word_to_upper = cmd.split(':')
 				
-				if args.input.lower().endswith('.docx'):
+				if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
 					for i in range(len(current_words)):
 						current_words[i] = Upper(current_words[i], word_to_upper)
 				else:
@@ -92,14 +100,14 @@ if args.pipeline:
 		if cmd.startswith('lower'):
 			if len(cmd.spit(':')) == 2:
 				current_cmd, word_to_lower = cmd.split(':')
-				if args.input.lower().endswith('.docx'):
+				if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
 					for i in range(len(current_words)):
 						current_words[i] = Lower(current_words[i], word_to_lower)
 				else:
 					current_words = Lower(current_words, word_to_lower)
 			elif len(cmd.split(':')) == 3:
 				current_cmd, word_target, letter_to_upper = cmd.split(':')
-				if args.input.lower().endswith('.docx'):
+				if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
 					for i in range(len(current_words)):
 						current_words[i] = Lower(current_words[i], word_target, letter=letter_to_upper)
 				else:
@@ -115,31 +123,52 @@ if args.pipeline:
 
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
-		document.paragraphs[i].text = ' '
-		for word in current_words[i]:
-			if word in [',', ';', '.']:
-				document.paragraphs[i].text += word
+		document.paragraphs[i].text = ''
+		document.paragraphs[i].runs.clear()
+		for elt in current_words[i]:
+			if elt in [',', ';', '.']:
+				document.paragraphs[i].text += elt
 			else:
-				document.paragraphs[i].text += ' ' + word
+				document.paragraphs[i].text += ' ' + elt
 
 	if args.output:
 		document.save(args.output)
 	else:
 		document.save('output.docx')
 
+elif args.input.lower().endswith('.odt'):
+
+	for child in list(document_odt.text.childNodes):
+		document_odt.text.removeChild(child)
+
+	for para in current_words:
+		text_tosave = ''
+		for elt in para:
+			if elt in [',', ';', '.']:
+				text_tosave += elt
+			else:
+				text_tosave += ' ' + elt
+		para_tosave = P(text=text_tosave)
+		document_odt.text.addElement(para_tosave)
+	
+	if args.output:
+		document_odt.save(args.output)
+	else:
+		document_odt.save('output.odt')
+
 else:
 	if args.output:
-		with open(args.output, 'w') as file:
-			for word in current_words:
-				if word in [',', ';', '.']:
-					file.write(word)
+		with open(args.output, 'w', encoding='utf-8') as file:
+			for elt in current_words:
+				if elt in [',', ';', '.']:
+					file.write(elt)
 				else:
-					file.write(' ' + word)
+					file.write(' ' + elt)
 
 	else:
-		with open('output.txt', 'w') as file:
-			for word in current_words:
-				if word in [',', ';', '.']:
-					file.write(word)
+		with open('output.txt', 'w', encoding='utf-8') as file:
+			for elt in current_words:
+				if elt in [',', ';', '.']:
+					file.write(elt)
 				else:
-					file.write(' ' + word)
+					file.write(' ' + elt)
