@@ -66,6 +66,25 @@ if args.pipeline:
 			
 			print("words : " + str(len_word))
 			print("punctuation : " + str(len_punctuation))
+		
+		elif cmd.startswith('wordcount'):
+			try:
+				current_cmd, word_to_count = cmd.split(':')
+			except:
+				raise Exception("la commande {cmd} ne correspond pas au schéma wordcount:word")
+			
+			word_iteration = 0
+			if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
+				for para in current_words:
+					for elt in para:
+						if elt == word_to_count:
+							word_iteration += 1
+			else:
+				for elt in current_words:
+					if elt == word_to_count:
+						word_iteration += 1
+			
+			print('word ' + '"' + word_to_count+ '"' + ' : ' + str(word_iteration))
 
 		elif cmd.startswith('replace'):
 
