@@ -16,10 +16,10 @@ parser.add_argument('-p', '--pipeline', help='pipeline de commande replace:old:n
 args = parser.parse_args()
 
 if not args.input:
-	raise Exception("il manque un fichier d'entrée ou de sortie")
+	raise Exception("il manque un fichier d'entrée")
 
 elif not os.path.isfile(args.input):
-	raise Exception("les fichiers mis en paramètre n'existent pas")
+	raise Exception(f"le fichier d'entrée {args.input} mis en paramètre n'existe pas")
 
 if str(args.input).lower().endswith('.docx'):
 	document = Document(args.input)
@@ -39,7 +39,7 @@ elif str(args.input).lower().endswith('.odt'):
 		current_words.append(Split_text(para.firstChild.data))
 
 else:
-	raise Exception("l'extension du fichier d'entrée n'est pas traitable")
+	raise Exception(f"l'extension du fichier d'entrée {args.output} n'est pas traitable")
 
 if args.pipeline:
 
@@ -67,18 +67,21 @@ if args.pipeline:
 			print("words : " + str(len_word))
 			print("punctuation : " + str(len_punctuation))
 
-		if cmd.startswith('replace'):
+		elif cmd.startswith('replace'):
 
-			current_cmd, old, new = cmd.split(':')
+			try:
+				current_cmd, old, new = cmd.split(':')
+			except:
+				raise Exception(f"la commande {cmd} ne correspond pas au schéma replace:old:new")
 
 			if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
 				for i in range(len(current_words)):
 					current_words[i] = Replace(old, new, current_words[i])
-					
+
 			else:
 				current_words = Replace(old, new, current_words)
-		
-		if cmd.startswith('upper'):
+
+		elif cmd.startswith('upper'):
 
 			if len(cmd.split(':')) == 2:
 				current_cmd, word_to_upper = cmd.split(':')
@@ -88,16 +91,18 @@ if args.pipeline:
 						current_words[i] = Upper(current_words[i], word_to_upper)
 				else:
 					current_words = Upper(current_words, word_to_upper)
+
 			elif len(cmd.split(':')) == 3:
 				current_cmd, word_target, letter_to_upper = cmd.split(':')
-				
+
 				if args.input.lower().endswith('.docx'):
 					for i in range(len(current_words)):
 						current_words[i] = Upper(current_words[i], word_target, letter=letter_to_upper)
 				else:
 					current_words = Upper(current_words, word_target, letter=letter_to_upper)
-		
-		if cmd.startswith('lower'):
+
+		elif cmd.startswith('lower'):
+
 			if len(cmd.spit(':')) == 2:
 				current_cmd, word_to_lower = cmd.split(':')
 				if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
@@ -105,6 +110,7 @@ if args.pipeline:
 						current_words[i] = Lower(current_words[i], word_to_lower)
 				else:
 					current_words = Lower(current_words, word_to_lower)
+
 			elif len(cmd.split(':')) == 3:
 				current_cmd, word_target, letter_to_upper = cmd.split(':')
 				if args.input.lower().endswith('.docx') or args.input.lower().endswith('.odt'):
@@ -113,13 +119,21 @@ if args.pipeline:
 				else:
 					current_words = Lower(current_words, word_target, letter=letter_to_upper)
 		
-		if cmd.startswith('capitalize'):
-			current_cmd, word_to_capitalize = cmd.split(':')
+		elif cmd.startswith('capitalize'):
+
+			try:
+				current_cmd, word_to_capitalize = cmd.split(':')
+			except:
+				raise Exception(f"la commande {cmd} ne correspond pas au schéma capitalize:word")
+
 			if args.input.lower().endswith('.docx'):
 				for i in range(len(current_words)):
 					current_words[i] = Upper(current_words[i], word_to_capitalize, letter=word_to_capitalize[0])
 			else:
 				current_words = Upper(current_words, word_to_capitalize, letter=word_to_capitalize[0])
+
+		else:
+			raise Exception(f"la commande {cmd} n'exite pas")
 
 if args.input.lower().endswith('.docx'):
 	for i in range(len(document.paragraphs)):
@@ -137,7 +151,7 @@ if args.input.lower().endswith('.docx'):
 		document.save('output.docx')
 
 elif args.input.lower().endswith('.odt'):
-	
+
 	document_odt = load(args.input)
 
 	for child in list(document_odt.text.childNodes):
@@ -152,7 +166,7 @@ elif args.input.lower().endswith('.odt'):
 				text_tosave += ' ' + elt
 		para_tosave = P(text=text_tosave)
 		document_odt.text.addElement(para_tosave)
-	
+
 	if args.output:
 		document_odt.save(args.output)
 	else:
