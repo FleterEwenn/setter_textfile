@@ -1,9 +1,6 @@
 import argparse
 import os
 import string
-from docx import Document
-from odf.opendocument import load
-from odf.text import P
 from pipeline_commands import Upper, Lower, Replace
 from split_text import File_text
 
@@ -53,7 +50,7 @@ if args.pipeline:
 			try:
 				current_cmd, word_to_count = cmd.split(':')
 			except:
-				raise Exception("la commande {cmd} ne correspond pas au schéma wordcount:word")
+				raise Exception(f"la commande {cmd} ne correspond pas au schéma wordcount:word")
 			
 			word_iteration = 0
 			if current_file.isodt or current_file.isdocx:
@@ -97,7 +94,7 @@ if args.pipeline:
 				current_cmd, word_target, letter_to_upper = cmd.split(':')
 
 				if current_file.isdocx or current_file.isodt:
-					for i in range(len(current_words)):
+					for i in range(len(current_file.current_words)):
 						current_file.current_words[i] = Upper(current_file.current_words[i], word_target, letter=letter_to_upper)
 				else:
 					current_file.current_words = Upper(current_file.current_words, word_target, letter=letter_to_upper)
@@ -128,10 +125,10 @@ if args.pipeline:
 				raise Exception(f"la commande {cmd} ne correspond pas au schéma capitalize:word")
 
 			if args.input.lower().endswith('.docx'):
-				for i in range(len(current_words)):
-					current_words[i] = Upper(current_words[i], word_to_capitalize, letter=word_to_capitalize[0])
+				for i in range(len(current_file.current_words)):
+					current_file.current_words[i] = Upper(current_file.current_words[i], word_to_capitalize, letter=word_to_capitalize[0])
 			else:
-				current_words = Upper(current_words, word_to_capitalize, letter=word_to_capitalize[0])
+				current_file.current_words = Upper(current_file.current_words, word_to_capitalize, letter=word_to_capitalize[0])
 
 		else:
 			raise Exception(f"la commande {cmd} n'exite pas")
